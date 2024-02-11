@@ -1,3 +1,13 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "PlagueHub", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+local Tab = Window:MakeTab({
+    Name = "Tab 1",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Adicionando a lista de itens e o botão correspondente
 local items = {
     "Spirit",
     "Secret Crystal",
@@ -45,16 +55,38 @@ local items = {
     "Ado Medal",
     "Mystical Crystal",
     "Crimson Cloud Medal",
+    -- Adicione outros itens conforme necessário
 }
 
-local rr = game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("TokenExchange")
+local quantidadeInput = Instance.new("TextBox")
+quantidadeInput.PlaceholderText = "Quantidade para Todos os Itens"
+quantidadeInput.Size = UDim2.new(0, 200, 0, 25)
 
-for _, item in ipairs(items) do
-    local args = {
-        [1] = item,
-        [2] = 10000000
-    }
+Tab:AddTextbox({
+    Name = "Quantidade para Todos os Itens",
+    Default = "99999999",
+    Callback = function(Value)
+        print(Value)
+    end
+})
 
-    rr:InvokeServer(unpack(args))
-    wait(1)
-end
+Tab:AddButton({
+    Name = "Trocar Todos",
+    Callback = function()
+        local quantidadeSelecionada = tonumber(quantidadeInput.Text) or 99999999  -- Padrão para 10 mil se não for um número válido
+
+        local rr = game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("TokenExchange")
+
+        for _, item in ipairs(items) do
+            local args = {
+                [1] = item,
+                [2] = quantidadeSelecionada
+            }
+
+            rr:InvokeServer(unpack(args))
+            wait(1)
+        end
+    end    
+})
+
+OrionLib:Init()
